@@ -10,18 +10,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 @Entity
 @Table(name = "product")
 public class Product implements Serializable {
-	
+
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-
-	@Column(name = "product_name")
+	@Column(name = "product_name", unique = true)
 	private String productName;
 
 	@Column(name = "description")

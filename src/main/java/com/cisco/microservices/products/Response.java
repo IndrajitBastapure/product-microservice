@@ -3,7 +3,14 @@ package com.cisco.microservices.products;
 import java.util.List;
 
 public class Response {
-	
+	private String status;
+
+	private String description;
+
+	private List<Product> data;
+
+	private ProductError error;
+
 	public String getStatus() {
 		return status;
 	}
@@ -20,19 +27,20 @@ public class Response {
 		this.description = description;
 	}
 
-	public List<Product> getProductList() {
-		return productList;
+	public List<Product> getData() {
+		return data;
 	}
 
-	public void setProductList(List<Product> productList) {
-		this.productList = productList;
+	public void setData(List<Product> data) {
+		this.data = data;
 	}
 
-	private String status;
-	
-	private String description;
-	
-	private List<Product> productList;
-	
+	public ProductError getError() {
+		return error;
+	}
+
+	public void setError(ProductError error) {
+		this.error = error;
+	}
 
 }

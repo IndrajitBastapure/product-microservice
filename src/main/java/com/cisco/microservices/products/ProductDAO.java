@@ -9,15 +9,11 @@ import org.springframework.stereotype.Repository;
 
 @Transactional
 @Repository
-public interface ProductDAO extends JpaRepository<Product, Long>{
-	 /**
-	   * Return the user having the passed email or null if no user is found.
-	   * 
-	   * @param email the user email.
-	   */
-	  public Product findByDescription(String email);
-	  
-	  public List<Product> findAll();
-	  
+public interface ProductDAO extends JpaRepository<Product, Long> {
 
+	public Product findByDescription(String email);
+
+	public List<Product> findAll();
+	
+	public List<Product> findByProductName(String productName);
 }
