@@ -11,14 +11,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cisco.microservices.users.User;
-import com.cisco.microservices.users.UsersController;
 
 @RestController
 @RequestMapping("/product")
 public class ProductController {
 
-	protected Logger logger = Logger.getLogger(UsersController.class.getName());
+	protected Logger logger = Logger.getLogger(ProductController.class.getName());
 	
 	@Autowired
 	private ProductDAO productDao;
