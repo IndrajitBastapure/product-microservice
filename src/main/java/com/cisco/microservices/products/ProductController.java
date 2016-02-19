@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
 	protected Logger logger = Logger.getLogger(ProductController.class.getName());
-
+	
 	@Autowired
 	private ProductDAO productDao;
 	
