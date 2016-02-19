@@ -22,36 +22,6 @@ public class ProductController {
 	@Autowired
 	private ProductDAO productDao;
 
-	@RequestMapping(value = "/delete/{productId}", method = RequestMethod.GET)
-	public Response deleteProduct(@PathVariable("productId") Long productId) {
-		Response res = new Response();
-		List<Product> list = new ArrayList<Product>();
-		System.out.println(productId);
-		Product deletedProduct = new Product();
-		deletedProduct.setId(productId);
-		list.add(deletedProduct);
-		try {
-			int isDeleted = productDao.deleteById(productId);
-			if (isDeleted == 1) {
-				res.setStatus("200");
-				res.setDescription("Product deleted successfully!");
-				res.setData(list);
-			} else {
-				res.setStatus("400");
-				res.setDescription("Invalid product id");
-				ProductError err = new ProductError();
-				err.setMsg("Product does not exists");
-				err.setParam("productId");
-				err.setValue("" + productId);
-				res.setError(err);
-			}
-			System.out.println(isDeleted);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return res;
-	}
-
 	@RequestMapping(value = "/addProduct", method = RequestMethod.POST, consumes = "application/json")
 	public Response addProduct(@RequestBody Product product) {
 		String productName = product.getProductName();
@@ -94,7 +64,81 @@ public class ProductController {
 		}
 		return res;
 	}
-	
+
+	@RequestMapping(value = "/updateProduct", method = RequestMethod.POST, consumes = "application/json")
+	public Response updateProduct(@RequestBody Product product) {
+		String productName = product.getProductName();
+		List<Product> productList = new ArrayList<Product>();
+		Response res = new Response();
+		logger.info("Product's updateProduct() invoked for :" + productName);
+
+		if (validateProductName(productName)) {
+			try {
+				Product p = new Product();
+				p.setProductName(productName);
+				p.setDescription(product.getDescription());
+				p.setAddedDate(new Date());
+				int isUpdated = productDao.updateProduct(product.getDescription(), new Date(), productName);
+				if (isUpdated == 1) {
+					res.setStatus("200");
+					res.setDescription("Product Updated successfully!");
+					logger.info("Product updated successfully!"+ isUpdated);
+				}
+				productList.add(p);
+				res.setData(productList);
+			} catch (Exception e) {
+				e.printStackTrace();
+				res.setStatus("400");
+				res.setDescription("Server error!");
+				ProductError err = new ProductError();
+				err.setMsg("Something went wrong");
+				err.setParam("productName");
+				err.setValue(productName);
+				res.setError(err);
+			}
+
+		} else {
+			res.setStatus("400");
+			res.setDescription("Invalid product id");
+			ProductError err = new ProductError();
+			err.setMsg("Product does not exists");
+			err.setParam("productName");
+			err.setValue(productName);
+			res.setError(err);
+		}
+		return res;
+	}
+
+	@RequestMapping(value = "/delete/{productId}", method = RequestMethod.GET)
+	public Response deleteProduct(@PathVariable("productId") Long productId) {
+		Response res = new Response();
+		List<Product> list = new ArrayList<Product>();
+		System.out.println(productId);
+		Product deletedProduct = new Product();
+		deletedProduct.setId(productId);
+		list.add(deletedProduct);
+		try {
+			int isDeleted = productDao.deleteById(productId);
+			if (isDeleted == 1) {
+				res.setStatus("200");
+				res.setDescription("Product deleted successfully!");
+				res.setData(list);
+			} else {
+				res.setStatus("400");
+				res.setDescription("Invalid product id");
+				ProductError err = new ProductError();
+				err.setMsg("Product does not exists");
+				err.setParam("productId");
+				err.setValue("" + productId);
+				res.setError(err);
+			}
+			System.out.println(isDeleted);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	private Response list() {
 		Response res = new Response();
