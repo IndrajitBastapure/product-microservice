@@ -7,11 +7,11 @@ import java.util.logging.Logger;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 
 @RestController
 @RequestMapping("/product")
@@ -22,21 +22,33 @@ public class ProductController {
 	@Autowired
 	private ProductDAO productDao;
 
-	@RequestMapping(value = "/addProductOld", method = RequestMethod.POST, consumes = "application/json")
-	public Response addProductOld(@RequestBody Product product) {
+	@RequestMapping(value = "/delete/{productId}", method = RequestMethod.GET)
+	public Response deleteProduct(@PathVariable("productId") Long productId) {
 		Response res = new Response();
 		List<Product> list = new ArrayList<Product>();
-		Product p = new Product();
-		p.setProductName(product.getProductName());
-		p.setDescription(product.getDescription());
-		p.setAddedDate(new Date());
-		Product addedProduct = productDao.save(p);
-
-		list.add(addedProduct);
-
-		res.setStatus("200");
-		res.setDescription("Product added successfully!");
-		res.setData(list);
+		System.out.println(productId);
+		Product deletedProduct = new Product();
+		deletedProduct.setId(productId);
+		list.add(deletedProduct);
+		try {
+			int isDeleted = productDao.deleteById(productId);
+			if (isDeleted == 1) {
+				res.setStatus("200");
+				res.setDescription("Product deleted successfully!");
+				res.setData(list);
+			} else {
+				res.setStatus("400");
+				res.setDescription("Invalid product id");
+				ProductError err = new ProductError();
+				err.setMsg("Product does not exists");
+				err.setParam("productId");
+				err.setValue("" + productId);
+				res.setError(err);
+			}
+			System.out.println(isDeleted);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return res;
 	}
 
@@ -64,7 +76,7 @@ public class ProductController {
 				p.setDescription(product.getDescription());
 				Product addedProduct = productDao.save(p);
 				logger.info("Product added!");
-				productList.add(p);
+				productList.add(addedProduct);
 
 				res.setStatus("200");
 				res.setDescription("Product added successfully!");
