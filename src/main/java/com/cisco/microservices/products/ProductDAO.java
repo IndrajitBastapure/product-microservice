@@ -11,10 +11,22 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Product Repository to perform product CRUD operations using JpaRepository.
+ * {@link JpaRepository}.
+ * 
+ * @author Sandip Bastapure
+ */
 @Transactional
 @Repository
 public interface ProductDAO extends JpaRepository<Product, Long> {
 
+	/**
+	 * @Modifying creating own update query to update the products using JpaRepository
+	 * 
+	 * @param args
+	 * 		NA
+	 */
 	public Product findByDescription(String email);
 
 	public List<Product> findAll();
@@ -25,6 +37,12 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
 	
 	public int deleteById(Long productId);
 	
+	/**
+	 * @Modifying creating own update query to update the products using JpaRepository
+	 * 
+	 * @param args
+	 * 		NA
+	 */
 	
     @Modifying
     @Query("UPDATE Product p SET p.description = :description, added_date= :addedDate WHERE p.productName = :productName")

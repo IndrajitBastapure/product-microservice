@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.sql.DataSource;
+import javax.transaction.Transactional;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.SessionFactory;
@@ -13,16 +14,25 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Configuration of springboot application with various beans
+ * 
+ * @author Sandip Bastapure
+ */
+@Transactional
+@Repository
 @Configuration
 @ComponentScan("com.cisco.microservices.products")
 public class AppConfig extends WebMvcConfigurerAdapter implements EmbeddedServletContainerCustomizer {

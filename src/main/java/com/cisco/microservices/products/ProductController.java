@@ -13,6 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+
+/**
+ * RESTful Client controller, fetches Product info from the microservice via
+ * {@link productDao}.
+ * 
+ * @author Sandip Bastapure
+ */
 @RestController
 @RequestMapping("/product")
 public class ProductController {
@@ -21,7 +28,18 @@ public class ProductController {
 
 	@Autowired
 	private ProductDAO productDao;
-
+	
+	@Autowired
+	public ProductController(ProductDAO productDao) {
+		logger.info("UserRepository says system has " + productDao.count()  + " users");
+	}
+	
+	/**
+	 * This method is used to add product with .
+	 * 
+	 * @param args
+	 * 		Product : productName, Description 
+	 */
 	@RequestMapping(value = "/addProduct", method = RequestMethod.POST, consumes = "application/json")
 	public Response addProduct(@RequestBody Product product) {
 		String productName = product.getProductName();
@@ -64,7 +82,14 @@ public class ProductController {
 		}
 		return res;
 	}
-
+	
+	
+	/**
+	 * Updates product info with below params  
+	 * 
+	 * @param args
+	 * 		Product : productName, Description 
+	 */
 	@RequestMapping(value = "/updateProduct", method = RequestMethod.POST, consumes = "application/json")
 	public Response updateProduct(@RequestBody Product product) {
 		String productName = product.getProductName();
@@ -87,6 +112,7 @@ public class ProductController {
 				productList.add(p);
 				res.setData(productList);
 			} catch (Exception e) {
+				logger.info("Exception in the updateProduct()");
 				e.printStackTrace();
 				res.setStatus("400");
 				res.setDescription("Server error!");
@@ -109,6 +135,12 @@ public class ProductController {
 		return res;
 	}
 
+	/**
+	 * Deletes product of given id  
+	 * 
+	 * @param args
+	 * 		Product : productId 
+	 */
 	@RequestMapping(value = "/delete/{productId}", method = RequestMethod.GET)
 	public Response deleteProduct(@PathVariable("productId") Long productId) {
 		Response res = new Response();
@@ -138,7 +170,13 @@ public class ProductController {
 		}
 		return res;
 	}
-
+	
+	/**
+	 * Fetch all list of all products  
+	 * 
+	 * @param args
+	 * 		NA
+	 */
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	private Response list() {
 		Response res = new Response();
@@ -154,6 +192,12 @@ public class ProductController {
 		return res;
 	}
 
+	/**
+	 * Verify whether the product already added or not  
+	 * 
+	 * @param args
+	 * 		NA
+	 */
 	private boolean validateProductName(String productName) {
 		List<Product> product = null;
 		try {
