@@ -74,6 +74,7 @@ public class ProductController {
 				Product p = new Product();
 				p.setProductName(productName);
 				p.setDescription(product.getDescription());
+				p.setAddedDate(new Date());
 				Product addedProduct = productDao.save(p);
 				logger.info("Product added!");
 				productList.add(addedProduct);
@@ -93,7 +94,7 @@ public class ProductController {
 		}
 		return res;
 	}
-
+	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	private Response list() {
 		Response res = new Response();
