@@ -69,7 +69,7 @@ public class AppConfig extends WebMvcConfigurerAdapter implements EmbeddedServle
 	public DataSource getDataSource() {
 	    BasicDataSource dataSource = new BasicDataSource();
 	    dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-	    dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/test");
+	    dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/shopping_portal");
 	    dataSource.setUsername("root");
 	    dataSource.setPassword("root");
 	    return dataSource;
