@@ -23,14 +23,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/product")
 public class ProductController {
 
-	protected Logger logger = Logger.getLogger(ProductController.class.getName());
+	protected Logger logger = Logger.getLogger(ProductController.class
+			.getName());
 
 	@Autowired
 	private ProductDAO productDao;
 
 	@Autowired
 	public ProductController(ProductDAO productDao) {
-		logger.info("UserRepository says system has " + productDao.count() + " users");
+		logger.info("UserRepository says system has " + productDao.count()
+				+ " users");
 	}
 
 	/**
@@ -48,47 +50,46 @@ public class ProductController {
 
 		if (productName == "") {
 			res.setStatus("400");
-			res.setDescription("Invalid productName!");
+			res.setDescription("Invalid productName");
 			ProductError err = new ProductError();
-			err.setMsg("productName can not be blank!");
+			err.setMsg("productName can not be blank");
 			err.setParam("productName");
 			err.setValue(productName);
 			res.setError(err);
-			logger.info("productName can not be blank!");
+			logger.info("productName can not be blank.");
 		} else if (validateProductName(productName)) {
-			res.setStatus("400");
-			res.setDescription("Product already exist!");
+			res.setStatus("409");
+			res.setDescription("Product already exist");
 			ProductError err = new ProductError();
 			err.setMsg("Product already exist");
 			err.setParam("productName");
 			err.setValue(productName);
 			res.setError(err);
 			System.out.println("Product already exist");
-			logger.info("Product already exist!");
+			logger.info("Product already exist");
 		} else {
-
 			try {
 				Product p = new Product();
 				p.setProductName(productName);
 				p.setDescription(product.getDescription());
 				p.setAddedDate(new Date());
 				Product addedProduct = productDao.save(p);
-				logger.info("Product added!");
+				logger.info("Product added");
 				productList.add(addedProduct);
 				res.setStatus("200");
 				res.setData(productList);
-				res.setDescription("Product added successfully!");
-				logger.info("Product added successfully!");
+				res.setDescription("Product added successfully");
+				logger.info("Product added successfully");
 
-			} catch (ConstraintViolationException e) {
-				res.setStatus("400");
-				res.setDescription("Server error!");
+			} catch (Exception e) {
+				res.setStatus("500");
+				res.setDescription("Internal Server error");
 				ProductError err = new ProductError();
 				err.setMsg("Something went wrong");
 				err.setParam("productName");
 				err.setValue(productName);
 				res.setError(err);
-				logger.info("Something went wrong!");
+				logger.info("Something went wrong");
 			}
 		}
 		return res;
@@ -100,7 +101,7 @@ public class ProductController {
 	 * @param args
 	 *            Product : productName, Description
 	 */
-	@RequestMapping(value = "/updateProduct", method = RequestMethod.POST, consumes = "application/json")
+	@RequestMapping(value = "/updateProduct", method = RequestMethod.PUT, consumes = "application/json")
 	public Response updateProduct(@RequestBody Product product) {
 		String productName = product.getProductName();
 		List<Product> productList = new ArrayList<Product>();
@@ -113,10 +114,11 @@ public class ProductController {
 				p.setProductName(productName);
 				p.setDescription(product.getDescription());
 				p.setAddedDate(new Date());
-				int isUpdated = productDao.updateProduct(product.getDescription(), new Date(), productName);
+				int isUpdated = productDao.updateProduct(
+						product.getDescription(), new Date(), productName);
 				if (isUpdated == 1) {
 					res.setStatus("200");
-					res.setDescription("Product Updated successfully!");
+					res.setDescription("Product Updated successfully");
 					logger.info("Product updated successfully!" + isUpdated);
 				}
 				productList.add(p);
@@ -124,8 +126,8 @@ public class ProductController {
 			} catch (Exception e) {
 				logger.info("Exception in the updateProduct()");
 				e.printStackTrace();
-				res.setStatus("400");
-				res.setDescription("Server error!");
+				res.setStatus("500");
+				res.setDescription("Internal Server Error");
 				ProductError err = new ProductError();
 				err.setMsg("Something went wrong");
 				err.setParam("productName");
@@ -134,14 +136,14 @@ public class ProductController {
 			}
 
 		} else {
-			res.setStatus("400");
-			res.setDescription("Invalid product id");
+			res.setStatus("404");
+			res.setDescription("Invalid product name");
 			ProductError err = new ProductError();
 			err.setMsg("Product does not exists");
 			err.setParam("productName");
 			err.setValue(productName);
 			res.setError(err);
-			logger.info("Product does not exists!");
+			logger.info("Product does not exists");
 		}
 		return res;
 	}
@@ -152,35 +154,55 @@ public class ProductController {
 	 * @param args
 	 *            Product : productId
 	 */
-	@RequestMapping(value = "/delete/{productId}", method = RequestMethod.GET)
-	public Response deleteProduct(@PathVariable("productId") Long productId) {
-		logger.info("Product deleteProduct() invoked for: " + productId);
+	@RequestMapping(value = "/delete/{productName}", method = RequestMethod.DELETE)
+	public Response deleteProduct(
+			@PathVariable("productName") String productName) {
+		logger.info("Product deleteProduct() invoked for: " + productName);
 		Response res = new Response();
 		List<Product> list = new ArrayList<Product>();
-		System.out.println(productId);
-		Product deletedProduct = new Product();
-		deletedProduct.setId(productId);
-		list.add(deletedProduct);
+		System.out.println(productName);
 		try {
-			int isDeleted = productDao.deleteById(productId);
+			List<Product> productList = productDao
+					.findByProductName(productName);
+			if (productList.size() == 0) {
+				res.setStatus("404");
+				res.setDescription("Invalid product name");
+				ProductError err = new ProductError();
+				err.setMsg("Product does not exists");
+				err.setParam("ProductName");
+				err.setValue(productName);
+				res.setError(err);
+				logger.info("Product does not exists");
+				return res;
+			}
+			list.addAll(productList);
+
+			int isDeleted = productDao.deleteById(productList.get(0).getId());
 			if (isDeleted == 1) {
 				res.setStatus("200");
-				res.setDescription("Product deleted successfully!");
+				res.setDescription("Product deleted successfully");
 				res.setData(list);
 				logger.info("Product deleted successfully");
 			} else {
-				res.setStatus("400");
-				res.setDescription("Invalid product id");
+				res.setStatus("404");
+				res.setDescription("");
 				ProductError err = new ProductError();
 				err.setMsg("Product does not exists");
-				err.setParam("productId");
-				err.setValue("" + productId);
+				err.setParam("ProductName");
+				err.setValue(productName);
 				res.setError(err);
 				logger.info("Product does not exists");
 			}
-			System.out.println(isDeleted);
+			logger.info("Deleted product :" + isDeleted);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.severe(e.getMessage());
+			res.setStatus("500");
+			ProductError err = new ProductError();
+			err.setMsg("Internal Server Error");
+			err.setParam("error");
+			err.setValue(e.getStackTrace().toString());
+			res.setError(err);
+			res.setDescription("Internal Server error");
 		}
 		return res;
 	}
@@ -196,8 +218,8 @@ public class ProductController {
 		Response res = new Response();
 		List<Product> productList = productDao.findAll();
 		if (productList.size() <= 0) {
-			res.setStatus("200");
-			res.setDescription("OOPs! it seems there are no product's added yet!");
+			res.setStatus("400");
+			res.setDescription("No products found");
 			logger.info("there are no product's added yet");
 		} else {
 			res.setStatus("200");
