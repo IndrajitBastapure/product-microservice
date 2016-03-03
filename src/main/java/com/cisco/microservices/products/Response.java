@@ -12,7 +12,7 @@ public class Response {
 
 	private String description;
 
-	private List<Product> data;
+	private Object data;
 
 	private ProductError error;
 
@@ -32,11 +32,11 @@ public class Response {
 		this.description = description;
 	}
 
-	public List<Product> getData() {
+	public Object getData() {
 		return data;
 	}
 
-	public void setData(List<Product> data) {
+	public void setData(Object data) {
 		this.data = data;
 	}
 

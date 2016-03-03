@@ -37,6 +37,8 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
 	
 	public int deleteById(Long productId);
 	
+	public Product getProductById(Long productId);
+	
 	/**
 	 * @Modifying creating own update query to update the products using JpaRepository
 	 * 

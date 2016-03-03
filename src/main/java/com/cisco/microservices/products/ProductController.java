@@ -250,4 +250,36 @@ public class ProductController {
 			return true;
 		}
 	}
+	
+	/*
+	 * 
+	 * This method is used to get particular User based on id.
+	 * 
+	 *  @param args
+	 *  			long productId
+	 *  
+	 */
+	@RequestMapping(value="/{id}", method = RequestMethod.GET)
+	public Response getUserById(@PathVariable("id") long productId){
+		Response res = null;
+		Product product = null;
+		try {
+			res = new Response();
+			product = (Product) productDao.getProductById(productId);
+			if (product == null) {
+				res.setStatus("404");
+				res.setDescription("Record Not Found");
+				res.setData(product);
+				return res;
+			}else{
+				res.setStatus("200");
+				res.setDescription("Product Found");
+				res.setData(product);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return res;
+	}
 }
