@@ -268,17 +268,20 @@ public class ProductController {
 			product = (Product) productDao.getProductById(productId);
 			if (product == null) {
 				res.setStatus("404");
-				res.setDescription("Record Not Found");
+				res.setDescription("Product Not Found");
 				res.setData(product);
 				return res;
 			}else{
 				res.setStatus("200");
 				res.setDescription("Product Found");
 				res.setData(product);
+				logger.info("Product does not exists");
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-			e.printStackTrace();
+			logger.info(e.getMessage());
+			res.setStatus("500");
+			res.setDescription("Internal server error");
 		}
 		return res;
 	}
